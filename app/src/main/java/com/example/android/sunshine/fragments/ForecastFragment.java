@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.android.sunshine.BuildConfig;
 import com.example.android.sunshine.R;
 
 import java.io.BufferedReader;
@@ -32,6 +34,13 @@ public class ForecastFragment extends Fragment {
 
     public static ForecastFragment newInstance() {
         return new ForecastFragment();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -58,6 +67,18 @@ public class ForecastFragment extends Fragment {
         mLvMain.setAdapter(mForecastAdapter);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_refresh) {
+            new FetchWeatherTask().execute();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     public class FetchWeatherTask extends AsyncTask<Void, Void, Void> {
 
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
@@ -75,7 +96,7 @@ public class ForecastFragment extends Fragment {
                 // Construct the URL for the OpenWeatherMap query
                 // Possible parameters are avaiable at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
-                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=cebu&mode=json&units=metric&cnt=7");
+                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=cebu&mode=json&units=metric&cnt=7&appid=" + BuildConfig.OPEN_WEATHER_MAP_API_KEY);
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -102,6 +123,7 @@ public class ForecastFragment extends Fragment {
                     // Stream was empty.  No point in parsing.
                 }
                 forecastJsonStr = buffer.toString();
+                Log.v(LOG_TAG, "Forecast JSON String: " + forecastJsonStr);
             } catch (IOException e) {
                 Log.e("LOG_TAG", "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attemping
