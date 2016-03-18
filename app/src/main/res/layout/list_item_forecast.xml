@@ -4,6 +4,6 @@
     android:id="@+id/tvListItemForecast"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    tools:text="List Item Forecast" />
+    tools:text="List Item Forecast"
+    android:gravity="center" />
