@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -176,10 +175,6 @@ public class ForecastFragment extends Fragment {
                 highAndLow = formatHighLows(high, low);
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
-
-            for (String s : resultStrs) {
-                Log.v(LOG_TAG, "Forecast entry: " + s);
-            }
             return resultStrs;
 
         }
@@ -212,14 +207,22 @@ public class ForecastFragment extends Fragment {
 
             String forecastJsonStr = HttpUtils.getResponse(builtUri, "GET");
 
-            Log.v(LOG_TAG, "Built Uri = " + builtUri.toString());
-
             try {
                 return getWeatherDataFromJson(forecastJsonStr, NUM_DAYS);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String[] result) {
+            if (result != null) {
+                mForecastAdapter.clear();
+                for (String dayForecastStr : result) {
+                    mForecastAdapter.add(dayForecastStr);
+                }
+            }
         }
     }
 }
