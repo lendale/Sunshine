@@ -221,11 +221,13 @@ public class ForecastFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String[] result) {
-            if (result != null) {
-                mForecastAdapter.clear();
-                for (String dayForecastStr : result) {
-                    mForecastAdapter.add(dayForecastStr);
-                }
+            if (result == null) {
+                return;
+            }
+
+            mForecastAdapter.clear();
+            for (String dayForecastStr : result) {
+                mForecastAdapter.add(dayForecastStr);
             }
         }
     }
